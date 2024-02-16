@@ -4,8 +4,7 @@ import MapComponent from './Map/MapComponent';
 function App() {
   return (
     <div className="App">
-      <h1>My Map</h1>
-      <title>FarmerApp</title>
+      <h3>My Map</h3>
       <MapComponent />
     </div>
   );
