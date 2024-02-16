@@ -1,10 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import '../App.css';
 
 function MapComponent() {
-  const position = [51.505, -0.09]; 
+  const [position,setPosition] = useState([51.505, -0.09]); 
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setPosition([position.coords.latitude, position.coords.longitude]);
+          console.log('executed')
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+        }
+      );
+    }
+  }, []);
 
   return (
     <MapContainer center={position} zoom={13} className="mapContainer">
