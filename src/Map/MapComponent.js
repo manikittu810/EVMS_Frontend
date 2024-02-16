@@ -14,6 +14,7 @@ function MapComponent() {
         (position) => {
           setPosition([position.coords.latitude, position.coords.longitude]);
           setLoading(false);
+          console.log('Working')
         },
         (error) => {
           console.error('Geolocation error:', error);
@@ -37,7 +38,7 @@ function MapComponent() {
       />
       <Marker position={position}>
         <Popup>
-          A simple popup. <br /> Easily customizable.
+          You are here.
         </Popup>
       </Marker>
     </MapContainer>
