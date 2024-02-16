@@ -4,23 +4,33 @@ import 'leaflet/dist/leaflet.css';
 import '../App.css';
 
 function MapComponent() {
+
   const [position,setPosition] = useState([51.505, -0.09]); 
+  const [loading,setLoading] = useState(true);
+
   useEffect(() => {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setPosition([position.coords.latitude, position.coords.longitude]);
-          console.log('executed')
+          setLoading(false);
         },
         (error) => {
           console.error('Geolocation error:', error);
+          setLoading(false);
         }
       );
-    }
+      }else{
+      setLoading(false);
+      }
   }, []);
 
   return (
-    <MapContainer center={position} zoom={13} className="mapContainer">
+    <div className="mapContainer">
+      {loading ? (
+        <p>Loading...</p>
+      ):(
+    <MapContainer center={position} zoom={13}  style={{height:'64vh', width: '100%'}}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; OpenStreetMap contributors"
@@ -31,6 +41,8 @@ function MapComponent() {
         </Popup>
       </Marker>
     </MapContainer>
+      )}
+    </div>
   );
 }
 
