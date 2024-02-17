@@ -1,50 +1,81 @@
-import React, { useEffect, useState } from 'react';
-import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet'
+import React, { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import '../App.css';
 
-function MapComponent() {
+const MapComponent = () => {
+  const [location, setLocation] = useState({ latitude: null, longitude: null });
+  const [weather, setWeather] = useState(null);
 
-  const [position,setPosition] = useState([51.505, -0.09]); 
-  const [loading,setLoading] = useState(true);
+  const getCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition(position => {
+      const { latitude, longitude } = position.coords;
+      setLocation({ latitude, longitude });
+      fetchWeatherData(latitude, longitude);
+    }, error => {
+      console.error("Error obtaining location:", error);
+    });
+  };
+
+  const fetchWeatherData = (latitude, longitude) => {
+    const apiKey = 'c9b63b8eb345f5756610d005b006e6c4'; // Replace this with your actual API key
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`; // Using metric units for temperature in Celsius
+  
+    fetch(apiUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch weather data');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Assuming you want to display the temperature and humidity
+        // You might need to adjust the access paths based on the API response structure
+        setWeather({
+          temperature: data.main.temp,
+          humidity: data.main.humidity,
+        });
+      })
+      .catch(error => {
+        console.error("Error fetching weather data:", error);
+        // Optionally, update the UI to reflect the error
+      });
+  };
 
   useEffect(() => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setPosition([position.coords.latitude, position.coords.longitude]);
-          setLoading(false);
-          console.log('Working')
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-          setLoading(false);
-        }
-      );
-      }else{
-      setLoading(false);
-      }
+    getCurrentLocation();
   }, []);
 
+  const UpdateMapPosition = () => {
+    const map = useMap();
+    if (location.latitude && location.longitude) {
+      map.flyTo([location.latitude, location.longitude], 13);
+    }
+    return null;
+  };
+
   return (
-    <div className="mapContainer">
-      {loading ? (
-        <p>Loading...</p>
-      ):(
-    <MapContainer center={position} zoom={13}  style={{height:'64vh', width: '100%'}}>
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; OpenStreetMap contributors"
-      />
-      <Marker position={position}>
-        <Popup>
-          You are here.
-        </Popup>
-      </Marker>
-    </MapContainer>
+    <div>
+      <h2>Current Location: 
+        <span id="location">{location.latitude && location.longitude ? `${location.latitude}, ${location.longitude}` : "Loading..."}</span>
+      </h2>
+      <h3>Weather Conditions: 
+        <span id="weather">{weather ? `Temperature: ${weather.temperature}°C, Humidity: ${weather.humidity}%` : "Loading..."}</span>
+      </h3>
+      {location.latitude && location.longitude && (
+        <MapContainer
+  center={[location.latitude, location.longitude]}
+  zoom={13}
+  style={{ height: 'calc(100vh - 20px)', width: '100%' }}>
+  <TileLayer
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  />
+  <Marker position={[location.latitude, location.longitude]} />
+  <UpdateMapPosition />
+</MapContainer>
       )}
     </div>
   );
-}
+};
 
 export default MapComponent;
