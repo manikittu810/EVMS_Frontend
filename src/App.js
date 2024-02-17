@@ -1,10 +1,13 @@
 import './App.css';
+import LoginComponent from './Login/LoginComponent';
+import RegistrationComponent from './Login/RegistrationComponent';
 import MapComponent from './Map/MapComponent';
 
 function App() {
   return (
     <div className="App">
-      <h3>My Map</h3>
+      <RegistrationComponent/>
+      {/* <LoginComponent /> */}
       <MapComponent />
     </div>
   );
