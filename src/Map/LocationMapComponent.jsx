@@ -1,18 +1,20 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 
 const LocationMapComponent = ({ location }) => {
+  const { latitude, longitude } = location;
+
   const UpdateMapPosition = () => {
     const map = useMap();
-    if (location.latitude && location.longitude) {
-      map.flyTo([location.latitude, location.longitude], 13);
+    if (latitude && longitude) {
+      map.flyTo([latitude, longitude], 13);
     }
     return null;
   };
 
-  return location.latitude && location.longitude ? (
+  return latitude && longitude ? (
     <MapContainer
-      center={[location.latitude, location.longitude]}
+      center={[latitude, longitude]}
       zoom={13}
       style={{ height: '200px', width: '100%' }}
     >
@@ -20,10 +22,9 @@ const LocationMapComponent = ({ location }) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      <Marker position={[location.latitude, location.longitude]} />
+      <Marker position={[latitude, longitude]} />
       <UpdateMapPosition />
     </MapContainer>
   ) : null;
 };
-
 export default LocationMapComponent;

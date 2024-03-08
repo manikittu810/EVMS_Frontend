@@ -47,6 +47,7 @@
 }
 
 .map-container {
-  height: calc(100vh - 350px); /* Adjust 250px based on your other elements' total height */
-  width: 100%;
+  height: calc(100vh - 650px); /* Adjust 250px based on your other elements' total height */
+  width: 800px;
 }
+
