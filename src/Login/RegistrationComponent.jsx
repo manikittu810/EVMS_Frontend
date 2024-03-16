@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 
 const RegistrationComponent = () => {
   const [user, setUser] = useState({
-    username: '',
-    password: '',
+    farmerName: '', // Changed from username to match backend
+    password: '', // Assuming you handle passwords separately since it's not in FarmerData class
     confirmPassword: '',
-    mobileNumber: '',
-    landArea: '',
+    cropCount: '', // Changed from ncpy to match backend, assuming this is what it represents
     email: '',
-    ncpy: '',
+    farmerArea: '', // Changed from landArea to match backend
+    phone: '',
     region: '',
     waterResource: '',
   });
@@ -32,23 +32,21 @@ const RegistrationComponent = () => {
     // Clear any previous error
     setError('');
 
-    // Replace with your actual backend endpoint
+    // Preparing data for the backend, excluding confirmPassword
+    const formData = {
+      ...user,
+      farmerArea: parseInt(user.farmerArea, 10), // Ensure farmerArea is an integer
+      cropCount: parseInt(user.cropCount, 10), // Ensure cropCount is an integer
+      phone: parseInt(user.phone, 10), // Ensure phone is stored as a long in backend
+    };
+    delete formData.confirmPassword; // Remove confirmPassword as it's not needed for the backend
+
     const response = await fetch('http://localhost:1234/farmer-list', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        username: user.username,
-        password: user.password, // Ensure your backend handles password securely
-        // Include other user fields as necessary
-        mobileNumber: user.mobileNumber,
-        landArea: user.landArea,
-        email: user.email,
-        ncpy: user.npy,
-        region: user.region,
-        waterResource: user.waterResource,
-      }),
+      body: JSON.stringify(formData),
     });
 
     if (!response.ok) {
@@ -65,17 +63,16 @@ const RegistrationComponent = () => {
     <div>
       <h2>Farmer Registration</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" name="username" value={user.username} onChange={handleChange} placeholder="Username" required />
+        <input type="text" name="farmerName" value={user.farmerName} onChange={handleChange} placeholder="Farmer Name" required />
         <input type="password" name="password" value={user.password} onChange={handleChange} placeholder="Password" required />
         <input type="password" name="confirmPassword" value={user.confirmPassword} onChange={handleChange} placeholder="Confirm Password" required />
-        {/* Other input fields remain the same */}
-        <input type="text" name="mobileNumber" value={user.mobileNumber} onChange={handleChange} placeholder="Mobile Number" />
-        <input type="text" name="landArea" value={user.landArea} onChange={handleChange} placeholder="Land Area" />
+        <input type="text" name="phone" value={user.phone} onChange={handleChange} placeholder="Mobile Number" />
+        <input type="text" name="farmerArea" value={user.farmerArea} onChange={handleChange} placeholder="Land Area in acres" />
         <input type="email" name="email" value={user.email} onChange={handleChange} placeholder="Email" />
-        <input type="text" name="ncpy" value={user.npy} onChange={handleChange} placeholder="NCPY" />
+        <input type="text" name="cropCount" value={user.cropCount} onChange={handleChange} placeholder="Number of Crop Yields Per Year" />
         <input type="text" name="region" value={user.region} onChange={handleChange} placeholder="Region" />
         <select name="waterResource" value={user.waterResource} onChange={handleChange}>
-        <option value="">Select Water Resource</option>
+          <option value="">Select Water Resource</option>
           <option value="WELL">Well</option>
           <option value="BOREWELL">Borewell</option>
           <option value="RIVER">River</option>
