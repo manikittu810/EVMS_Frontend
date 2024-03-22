@@ -61,7 +61,8 @@ const RegistrationComponent = () => {
 
   return (
     <div>
-      <h2>Farmer Registration</h2>
+      <h2>Farmer Registration Portal Welcomes You..</h2>
+      <h4>Please Enter your details to get registered</h4>
       <form onSubmit={handleSubmit}>
         <input type="text" name="farmerName" value={user.farmerName} onChange={handleChange} placeholder="Farmer Name" required />
         <input type="password" name="password" value={user.password} onChange={handleChange} placeholder="Password" required />
